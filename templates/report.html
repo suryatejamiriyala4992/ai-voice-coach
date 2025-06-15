@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Detailed Report</h1>
+{% if transcript and feedback %}
+    <h2>Transcript</h2>
+    <p>{{ transcript }}</p>
+
+    <h2>Feedback Summary</h2>
+    <ul>
+    {% for item in feedback %}
+        <li>{{ item }}</li>
+    {% endfor %}
+    </ul>
+{% else %}
+    <p>No report available. Please <a href="{{ url_for('index') }}">upload a file</a> first.</p>
+{% endif %}
+{% endblock %}
