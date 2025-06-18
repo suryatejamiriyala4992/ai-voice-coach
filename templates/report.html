@@ -1,17 +1,86 @@
-{% extends "base.html" %}
-{% block content %}
-<h1>Detailed Report</h1>
-{% if transcript and feedback %}
-    <h2>Transcript</h2>
-    <p>{{ transcript }}</p>
+<!DOCTYPE html>
+<html lang="en">
 
-    <h2>Feedback Summary</h2>
-    <ul>
-    {% for item in feedback %}
-        <li>{{ item }}</li>
-    {% endfor %}
-    </ul>
-{% else %}
-    <p>No report available. Please <a href="{{ url_for('index') }}">upload a file</a> first.</p>
-{% endif %}
-{% endblock %}
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Report - AI Voice Coach</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+
+<body class="bg-gray-900 text-white font-sans">
+  {% set feedback = session.get('feedback') %}
+  {% set transcript = session.get('transcript') %}
+  {% set word_freq = session.get('word_freq') %}
+  {% set filler_count = session.get('filler_count') %}
+
+  <div class="min-h-screen px-6 py-8">
+    <nav class="flex gap-4 text-indigo-400 mb-8">
+      <a href="/" class="hover:underline">Home</a>
+      <a href="/how-it-works" class="hover:underline">How It Works</a>
+      <a href="/about" class="hover:underline">About</a>
+      <a href="/why-us" class="hover:underline">Why Us</a>
+    </nav>
+
+    <h1 class="text-3xl font-semibold text-indigo-300 mb-6">📝 Speech Report</h1>
+
+    {% if feedback %}
+    <div class="bg-indigo-800/20 border border-indigo-500 rounded-lg p-6 mb-6 max-w-3xl">
+      <h2 class="text-2xl font-semibold mb-2">1) Report</h2>
+      <ul class="list-disc list-inside space-y-2 text-indigo-100">
+        {% for tip in feedback %}
+        <li>{{ tip }}</li>
+        {% endfor %}
+      </ul>
+    </div>
+    {% endif %}
+
+    {% if filler_count %}
+    <div class="bg-gray-800 border border-gray-700 rounded-lg p-6 mb-6 max-w-3xl">
+      <h2 class="text-2xl font-semibold mb-2 text-indigo-300">2) Filler Count</h2>
+      <ul class="list-disc list-inside text-gray-300">
+        {% for word, count in filler_count.items() %}
+        <li><span class="font-medium">{{ word }}</span>: {{ count }} time{{ 's' if count > 1 else '' }}</li>
+        {% endfor %}
+      </ul>
+    </div>
+    {% endif %}
+
+    {% if word_freq %}
+    <div class="bg-gray-800 border border-gray-700 rounded-lg p-6 mb-6 max-w-3xl">
+      <h2 class="text-2xl font-semibold mb-2 text-indigo-300">3) Most Repeated Words</h2>
+      <ul class="list-disc list-inside text-gray-300">
+        {% set sorted_words = word_freq|dictsort(true, 'value') %}
+        {% for word, freq in sorted_words[:10] %}
+          <li><span class="font-medium">{{ word }}</span>: {{ freq }} time{{ 's' if freq > 1 else '' }}</li>
+        {% endfor %}
+      </ul>
+    </div>
+    {% endif %}
+
+    {% if transcript %}
+    <div class="bg-gray-800 rounded-lg p-6 mb-6 max-w-3xl">
+      <h2 class="text-2xl font-semibold mb-2">Transcript</h2>
+      <p class="text-gray-300">{{ transcript }}</p>
+    </div>
+    {% endif %}
+
+    {% if session.get('audio_file') %}
+    <div class="max-w-xl mx-auto bg-gray-800 p-6 rounded-lg shadow-lg">
+      <audio id="audioPlayer" class="w-full mb-4" controls>
+        <source src="{{ url_for('static', filename='uploads/' + session['audio_file']) }}" type="audio/wav">
+        Your browser does not support the audio element.
+      </audio>
+      <div class="flex justify-center gap-4">
+        <button onclick="document.getElementById('audioPlayer').currentTime -= 5" class="bg-gray-700 hover:bg-gray-600 px-3 py-1 rounded">-5s</button>
+        <button onclick="document.getElementById('audioPlayer').play()" class="bg-indigo-600 hover:bg-indigo-700 px-4 py-1 rounded">Play</button>
+        <button onclick="document.getElementById('audioPlayer').pause()" class="bg-indigo-600 hover:bg-indigo-700 px-4 py-1 rounded">Pause</button>
+        <button onclick="document.getElementById('audioPlayer').currentTime += 5" class="bg-gray-700 hover:bg-gray-600 px-3 py-1 rounded">+5s</button>
+      </div>
+    </div>
+    {% endif %}
+  </div>
+</body>
+
+</html>

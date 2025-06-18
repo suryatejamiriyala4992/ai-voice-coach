@@ -1,33 +1,79 @@
-{% extends "base.html" %}
-{% block content %}
-<h1>🎤 AI Voice Coach</h1>
-<form method="POST" enctype="multipart/form-data">
-    <input type="file" name="file" accept=".wav,.mp3,.m4a" required>
-    <button type="submit">Analyze</button>
-</form>
+<!DOCTYPE html>
+<html lang="en">
 
-{% with messages = get_flashed_messages() %}
-    {% if messages %}
-        <div class="alert">
-            {% for message in messages %}
-                <p>{{ message }}</p>
-            {% endfor %}
-        </div>
-    {% endif %}
-{% endwith %}
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI Voice Coach</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    .wave-animation {
+      display: flex;
+      justify-content: center;
+      gap: 5px;
+      margin-top: 20px;
+    }
+    .bar {
+      width: 6px;
+      height: 20px;
+      background-color: #6366f1;
+      animation: pulse 1s infinite ease-in-out;
+    }
+    .bar:nth-child(2) {
+      animation-delay: 0.2s;
+    }
+    .bar:nth-child(3) {
+      animation-delay: 0.4s;
+    }
+    .bar:nth-child(4) {
+      animation-delay: 0.6s;
+    }
+    .bar:nth-child(5) {
+      animation-delay: 0.8s;
+    }
+    @keyframes pulse {
+      0%, 100% { height: 20px; }
+      50% { height: 40px; }
+    }
+  </style>
+</head>
 
-{% if transcript %}
-    <h2>Transcript</h2>
-    <textarea rows="6" readonly>{{ transcript }}</textarea>
-{% endif %}
+<body class="bg-gray-900 text-white font-sans">
+  <div class="min-h-screen flex flex-col items-center justify-center px-4">
+    <header class="text-center mb-10">
+      <h1 class="text-4xl font-bold text-white mb-2">AI Voice Coach</h1>
+      <nav class="flex justify-center gap-6 text-indigo-400">
+        <a href="/about" class="hover:underline">About</a>
+        <a href="/how-it-works" class="hover:underline">How to Use</a>
+        <a href="/why-us" class="hover:underline">Why Us</a>
+        {% if session.get('transcript') and session.get('feedback') %}
+          
+        {% endif %}
+      </nav>
+    </header>
 
-{% if feedback %}
-    <h2>Feedback</h2>
-    <ul>
-        {% for item in feedback %}
-            <li>{{ item }}</li>
-        {% endfor %}
-    </ul>
-    <a href="{{ url_for('report') }}">View Full Report</a>
-{% endif %}
-{% endblock %}
+    <form id="speechForm" method="POST" enctype="multipart/form-data" class="bg-gray-800 p-6 rounded-lg shadow-lg w-full max-w-md">
+      <label for="file" class="block mb-2 font-semibold">Upload your speech audio file:</label>
+      <input type="file" name="file" id="file" class="block w-full mb-4 bg-gray-700 text-white p-2 rounded" required>
+      <button type="submit" id="analyzeBtn" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2 px-4 rounded">
+        Analyze Speech
+      </button>
+      <div id="waveLoader" class="wave-animation hidden">
+        <div class="bar"></div>
+        <div class="bar"></div>
+        <div class="bar"></div>
+        <div class="bar"></div>
+        <div class="bar"></div>
+      </div>
+    </form>
+  </div>
+
+  <script>
+    document.getElementById("speechForm").addEventListener("submit", function () {
+      document.getElementById("waveLoader").classList.remove("hidden");
+    });
+  </script>
+</body>
+
+</html>

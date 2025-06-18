@@ -1,40 +1,24 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Voice Coach</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}AI Voice Coach{% endblock %}</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 </head>
-<body>
-    <nav>
-        <a href="/">Home</a>
-        <a href="/how-it-works">How It Works</a>
-        <a href="/about">About</a>
-        <a href="/report">Report</a>
-    </nav>
-
-    <div class="container">
-        {% block content %}{% endblock %}
-    </div>
-
-    <footer class="footer">
-        <p>🎤 AI Voice Coach &copy; 2025</p>
-    </footer>
-
-    {% if session.get('audio_file') %}
-    <div class="player-bar">
-        <audio id="audioPlayer" controls>
-            <source src="{{ url_for('static', filename='uploads/' + session['audio_file']) }}" type="audio/wav">
-            Your browser does not support the audio element.
-        </audio>
-        <div class="controls">
-            <button onclick="document.getElementById('audioPlayer').currentTime -= 5">⏮ Back</button>
-            <button onclick="document.getElementById('audioPlayer').play()">▶ Play</button>
-            <button onclick="document.getElementById('audioPlayer').pause()">⏸ Pause</button>
-            <button onclick="document.getElementById('audioPlayer').currentTime += 5">⏭ Forward</button>
-        </div>
-    </div>
+<body class="bg-gray-900 text-white font-sans min-h-screen">
+  <nav class="flex justify-center gap-6 py-6 text-indigo-400 text-lg">
+    <a href="/" class="hover:underline">Home</a>
+    <a href="/about" class="hover:underline">About</a>
+    <a href="/how-it-works" class="hover:underline">How to Use</a>
+    <a href="/why-us" class="hover:underline">Why Us</a>
+    {% if request.path == '/' and session.get('transcript') and session.get('feedback') %}
+      <a href="/report" class="hover:underline">Report</a>
     {% endif %}
+  </nav>
+  <main>
+    {% block content %}{% endblock %}
+  </main>
 </body>
 </html>
