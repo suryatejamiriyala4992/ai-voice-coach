@@ -5,3 +5,4 @@ pydub==0.25.1
 audioread==3.0.1
 annotated-types==0.7.0
 blinker==1.9.0
+gunicorn
